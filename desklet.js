@@ -1,10 +1,9 @@
 const Gio = imports.gi.Gio;
 const St = imports.gi.St;
-
 const Desklet = imports.ui.desklet;
-
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
+const Settings = imports.ui.settings;
 
 function MyDesklet(metadata, desklet_id){
     this._init(metadata, desklet_id);
@@ -15,6 +14,22 @@ MyDesklet.prototype = {
 
     _init: function(metadata, desklet_id){
         Desklet.Desklet.prototype._init.call(this, metadata, desklet_id);
+
+	this.metadata = metadata;
+
+	 try {
+            this.settings = new Settings.DeskletSettings(this, this.metadata["uuid"], this.instance_id);
+
+            this.settings.bindProperty(Settings.BindingDirection.IN,
+                                     "directory",
+                                     "dir",
+                                     this.on_setting_changed,
+                                     null);
+	} catch (e) {
+            global.logError(e);
+        } 
+
+
         this._quoteContainer = new St.BoxLayout({vertical:true, style_class: 'quote-container'});
         this._dateContainer =  new St.BoxLayout({vertical:false, style_class: 'date-container'});
 

@@ -1,0 +1,9 @@
+{
+    "directory": {
+        "default": "~/Pictures", 
+        "type": "filechooser", 
+        "description" : "Folder:", 
+        "allow-none" : false,
+        "select-dir" : true
+    }
+}
