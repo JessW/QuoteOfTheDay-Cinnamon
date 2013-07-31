@@ -1,0 +1,6 @@
+{
+ "uuid": "quoteOfTheDay@tinnu",
+ "name": "Quote of the Day desklet",
+ "description": "A desklet that displays a quotation",
+ "prevent-decorations": false
+}
