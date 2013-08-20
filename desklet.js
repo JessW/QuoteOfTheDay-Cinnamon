@@ -41,16 +41,9 @@ MyDesklet.prototype = {
         this.setHeader(_("Quote"));
 	// changing clock to quote below crashes cinnamon, oops
         this._dateSettings = new Gio.Settings({schema: 'org.cinnamon.desklets.clock'});
-        this._dateSettings.connect("changed::font-size", Lang.bind(this, this._onFontSizeChanged));
-        this._onFontSizeChanged();
         this._updateQuote();
     },
 
-     _onFontSizeChanged: function(){
-        //this._date.style="font-size: " + this._dateSettings.get_int("font-size") + "pt";
-
-    },
-        
     on_desklet_removed: function() {
 	Mainloop.source_remove(this.timeout);
     },

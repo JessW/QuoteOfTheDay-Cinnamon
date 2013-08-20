@@ -1,9 +1,9 @@
 {
     "directory": {
-        "default": "~/Pictures", 
+        "default": "~/Quotes/literature", 
         "type": "filechooser", 
-        "description" : "Folder:", 
+        "description" : "File:", 
         "allow-none" : false,
-        "select-dir" : true
+        "select-dir" : false
     }
 }
