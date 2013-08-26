@@ -5,7 +5,7 @@
 /*.hour-container{}*/
 .date-container{
 	font-size: 15pt;
-	text-align: right;
+	text-align: left;
 }
 .clock-hour-label{
 	font-size: 50pt;

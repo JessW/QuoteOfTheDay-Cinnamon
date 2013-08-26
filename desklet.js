@@ -1,9 +1,10 @@
-const Gio = imports.gi.Gio;
-const St = imports.gi.St;
+const Cinnamon = imports.gi.Cinnamon;
 const Desklet = imports.ui.desklet;
+const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 const Settings = imports.ui.settings;
+const St = imports.gi.St;
 
 function MyDesklet(metadata, desklet_id){
     this._init(metadata, desklet_id);
@@ -14,6 +15,7 @@ MyDesklet.prototype = {
 
     _init: function(metadata, desklet_id){
         Desklet.Desklet.prototype._init.call(this, metadata, desklet_id);
+
 
 	this.metadata = metadata;
 
@@ -26,6 +28,7 @@ MyDesklet.prototype = {
                                      this.on_setting_changed,
                                      null);
 	} catch (e) {
+	    global.logError("logging from _init");
             global.logError(e);
         } 
 
@@ -47,12 +50,36 @@ MyDesklet.prototype = {
     on_desklet_removed: function() {
 	Mainloop.source_remove(this.timeout);
     },
+   
+    // I need this function to exist for the setting binding, but I dunno what to put here yet! 
+    on_setting_changed: function() {
+       let dateFormat = '%A,%e %B';
+    },
 
     _updateQuote: function(){
+       try {
        let dateFormat = '%A,%e %B';
        let displayDate = new Date();
-       this._date.set_text(displayDate.toLocaleFormat(dateFormat));
-       this.timeout = Mainloop.timeout_add_seconds(1, Lang.bind(this, this._updateQuote));
+       // fileContents istanceof String is false
+       let fileContents = Cinnamon.get_file_contents_utf8_sync("/home/jessica/Quotes/literature");
+       let myString = fileContents.toString();
+       let firstIndex = myString.indexOf("%");
+       let secondIndex = myString.indexOf("%", firstIndex + 1); // do i need +1?
+       let substring = myString.substring(firstIndex + 1, secondIndex);
+       this._date.set_text(substring); // this works
+
+       //this._date.set_text(fileContents);  // this works
+       //this._date.set_text(myString); // this works
+
+       //this._date.set_text(displayDate.toLocaleFormat(dateFormat));
+       //let index = fileContents.indexOf("a");
+       //this._date.set_text(index);
+       
+       this.timeout = Mainloop.timeout_add_seconds(100, Lang.bind(this, this._updateQuote));
+       }catch(e){
+	  global.logError("logging from _updateQuote");
+	  global.logError(e);
+       }
     }
 }
 
