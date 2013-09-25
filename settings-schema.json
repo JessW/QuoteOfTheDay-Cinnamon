@@ -5,5 +5,28 @@
         "description" : "File:", 
         "allow-none" : false,
         "select-dir" : false
+    },
+    "delay": {
+        "default": 60,
+        "type": "spinbutton",
+        "min": 1,
+        "max": 1440,
+        "description" : "Update every:",
+        "units" : "minutes",
+        "step": 10 
+    },
+    "AdvancedSettingsSeparator": {
+        "type" : "separator"
+    },
+    "AdvancedSettingsHeader" : {
+        "type" : "header",
+	"description" : "Advanced Settings"
+    },
+    "quoteSeparator": {
+        "default": "%", 
+        "type": "entry", 
+        "description" : "End of quote character:", 
+        "allow-none" : false,
+        "tooltip" : "A single character that separates each quotation in the file"
     }
 }
