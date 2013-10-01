@@ -1,6 +1,6 @@
 {
     "file": {
-        "default": "~/Quotes/literature", 
+        "default": "/usr/share/games/fortunes/literature", 
         "type": "filechooser", 
         "description" : "File:", 
         "allow-none" : false,

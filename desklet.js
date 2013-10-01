@@ -1,6 +1,5 @@
 const Cinnamon = imports.gi.Cinnamon;
 const Desklet = imports.ui.desklet;
-const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
@@ -17,12 +16,12 @@ MyDesklet.prototype = {
     _init: function(metadata, desklet_id){
         Desklet.Desklet.prototype._init.call(this, metadata, desklet_id);
 
-
 	this.metadata = metadata;
 	this.update_id = null;
 
 	 try {
-            this.settings = new Settings.DeskletSettings(this, this.metadata["uuid"], this.instance_id);
+            this.settings = new Settings.DeskletSettings(
+		  this, this.metadata["uuid"], this.instance_id);
 
             this.settings.bindProperty(Settings.BindingDirection.IN,
                                      "file",
@@ -38,8 +37,10 @@ MyDesklet.prototype = {
             global.logError(e);
         } 
 
-        this.setHeader(_("Quote"));
 	this.sep = "%";
+	this.maxSize = 10000; // Many more characters, and Cinnamon crashes
+
+        this.setHeader(_("Quote"));
 	this.setup_display();
     },
 
@@ -51,11 +52,12 @@ MyDesklet.prototype = {
     },
 
     on_desklet_removed: function() {
-	Mainloop.source_remove(this.timeout);
+	Mainloop.source_remove(this.update_id);
     },
    
     setup_display: function() {
-        this._quoteContainer = new St.BoxLayout({vertical:true, style_class: 'quote-container'});
+        this._quoteContainer = 
+	   new St.BoxLayout({vertical:true, style_class: 'quote-container'});
         this._quote = new St.Label();
 
 	this._quoteContainer.add(this._quote);
@@ -69,7 +71,8 @@ MyDesklet.prototype = {
 
     _update_loop: function(){
         this._update();
-        this.update_id = Mainloop.timeout_add_seconds(this.delay, Lang.bind(this, this._update_loop));
+        this.update_id = Mainloop.timeout_add_seconds(
+	      this.delay*60, Lang.bind(this, this._update_loop));
     },
 
     _update: function(){
@@ -79,21 +82,11 @@ MyDesklet.prototype = {
        this.updateInProgress = true;
 
        try {
-	  // Since we update infrequently, reread the file in case it has changed.
+	  // Since we update infrequently, reread the file in case it has changed
 	  if (!GLib.file_test(this.file, GLib.FileTest.EXISTS))
 	       return;
-	  this._quote.set_text("abc");
 	  let quoteFileContents = Cinnamon.get_file_contents_utf8_sync(this.file);
 	  let allQuotes = quoteFileContents.toString();
-
-	  // TODO: Limit the size of the string displayed?
-	  // TODO: Allow user to select font and font size
-
-	  // Verify that the file is properly formatted with at least one separator
-	  if (allQuotes.indexOf(this.sep) === -1) {
-	     this._quote.set_text("");
-	     return;
-	  }
 
 	  // Ensure first and last chars are 'sep', for symmetry
 	  if (allQuotes.charAt(0) !== this.sep) {
@@ -110,14 +103,12 @@ MyDesklet.prototype = {
 	  let index = Math.floor(Math.random() * (this.separators.length - 1));
 
 	  // Parse chosen quote for display
-	  let substring = allQuotes.substring(
+	  let currentQuote = allQuotes.substring(
 		this.separators[index] + 1, this.separators[index+1]);
-	  this._quote.set_text(substring);
+	  currentQuote = currentQuote.substring(0, 
+		Math.min(currentQuote.length, this.maxSize)); // truncate if needed
+	  this._quote.set_text(currentQuote);
 
-	  // TODO: Do this like in photoframe 
-	  // call _update again after this.delay minutes 
-	  //this.timeout = 
-	    // Mainloop.timeout_add_seconds(this.delay, Lang.bind(this, this._update));
 	} catch (e) {
             global.logError(e);
         } finally {
@@ -125,11 +116,9 @@ MyDesklet.prototype = {
         }   
     },
 
-    // TODO: Test this
     on_desklet_clicked: function(event){  
        this._update();
     },
-
     
     _findSeparators: function(allQuotes){
        this.separators = [];
