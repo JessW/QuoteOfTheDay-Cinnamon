@@ -1,0 +1,28 @@
+Quote of the Day Cinnamon Desklet v0.1 - Oct. 1, 2013
+
+This desklet displays a random quote of the day.
+
+
+** Configuration options **
+The following options are configurable via the Cinnamon Desklet GUI by right clicking "Quote of the Day desklet" and choosing Configure.
+
+ 	- Input file - see below for details on file format
+	- How frequently to display a new quote, from once a minute to once a day
+
+Changes to the font or font size are sadly only configurable by editing the stylesheet.css file.  Edit the existing font-size entry to change the font size.  Add a line below the font-size line, such as
+font-family:"Times New Roman";
+to change the font.  By default, the font should come from the active theme.
+
+Important: After changing the settings you need to remove and re-add the desklet.
+
+
+** Input file format **
+The input file format is the same as that for the classic fortune (/usr/games/fortune) program.  See /usr/share/games/fortunes for examples.  The format is simply, "a text file with quotations, each separated by the character "%" on its own line," as explained on the Wikipedia page.  Whitespace formatting within the text file is preserved when the quote is displayed.
+
+
+** TODO **
+Make font options configurable through the GUI - I will as soon as I figure out how to! 
+
+Comments welcome.
+
+Jess (tinytinnu [at] gmail [dot] com)
