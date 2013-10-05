@@ -38,7 +38,7 @@ MyDesklet.prototype = {
         } 
 
 	this.sep = "%";
-	this.maxSize = 10000; // Many more characters, and Cinnamon crashes
+	this.maxSize = 7000; // Many more characters, and Cinnamon crashes
 
         this.setHeader(_("Quote"));
 	this.setup_display();
