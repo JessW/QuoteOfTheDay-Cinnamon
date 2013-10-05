@@ -21,32 +21,26 @@ MyDesklet.prototype = {
 
 	 try {
             this.settings = new Settings.DeskletSettings(
-		  this, this.metadata["uuid"], this.instance_id);
+			this, this.metadata["uuid"], this.instance_id);
 
-            this.settings.bindProperty(Settings.BindingDirection.IN,
-                                     "file",
-                                     "file",
-                                     this.on_setting_changed,
-                                     null);
-            this.settings.bindProperty(Settings.BindingDirection.IN,
-                                     "delay",
-                                     "delay",
-                                     this.on_setting_changed,
-                                     null);
-	} catch (e) {
+            this.settings.bindProperty(Settings.BindingDirection.IN, "file", "file", this.on_setting_changed, null);
+            this.settings.bindProperty(Settings.BindingDirection.IN, "delay", "delay", this.on_setting_changed, null);
+	} 
+	catch (e) {
             global.logError(e);
         } 
 
-	this.sep = "%";
-	this.maxSize = 7000; // Many more characters, and Cinnamon crashes
+		this.sep = "%"; // SPACE
+		this.maxSize = 7000; // Cinnamon can crash if this int is too high
 
-        this.setHeader(_("Quote"));
-	this.setup_display();
+        this.setHeader(_("Quote of the day"));
+		this.setup_display();
     },
 
     on_setting_changed: function() {
-        if (this.update_id > 0)
+        if (this.update_id > 0) {
             Mainloop.source_remove(this.update_id);
+		}
         this.update_id = null;
         this.setup_display();
     },
@@ -57,31 +51,38 @@ MyDesklet.prototype = {
    
     setup_display: function() {
         this._quoteContainer = 
-	   new St.BoxLayout({vertical:true, style_class: 'quote-container'});
+		new St.BoxLayout({vertical:true, style_class: 'quote-container'});
         this._quote = new St.Label();
 
-	this._quoteContainer.add(this._quote);
+		this._quoteContainer.add(this._quote);
         this.setContent(this._quoteContainer);
 
-	this.updateInProgress = false;
+		this.updateInProgress = false;
         this.file = this.file.replace('~', GLib.get_home_dir());
 	
-	this._update_loop();
+		this._update_loop();
     },
 
+	/**
+	 * Updates every user set secconds?
+	 **/
     _update_loop: function(){
         this._update();
         this.update_id = Mainloop.timeout_add_seconds(
-	      this.delay*60, Lang.bind(this, this._update_loop));
+	    this.delay*60, Lang.bind(this, this._update_loop));
     },
 
+	/**
+	 * Method to update the text/reading of the file
+	 **/
     _update: function(){
        if (this.updateInProgress) {
-	  return;
+			return;
        }
        this.updateInProgress = true;
 
-       try {
+      try {
+		  
 	  // Since we update infrequently, reread the file in case it has changed
 	  if (!GLib.file_test(this.file, GLib.FileTest.EXISTS))
 	       return;
@@ -110,7 +111,7 @@ MyDesklet.prototype = {
 	  this._quote.set_text(currentQuote);
 
 	} catch (e) {
-            global.logError(e);
+			global.logError(e);
         } finally {
             this.updateInProgress = false;
         }   
@@ -124,14 +125,15 @@ MyDesklet.prototype = {
        this.separators = [];
        let index = 0;
 
-       while (index < allQuotes.length) {
-	  index = allQuotes.indexOf(this.sep, index);
-	  if (index === -1)
-	     break;  // no more separators
-	  this.separators.push(index);
-	  index++;
-       }
-    }
+      while (index < allQuotes.length) {
+		index = allQuotes.indexOf(this.sep, index);
+		if (index === -1) {
+			break;  // no more separator
+		}
+		this.separators.push(index);
+		index++;
+      }
+   }
 }
 
 function main(metadata, desklet_id){
