@@ -14,5 +14,20 @@
         "description" : "Update every:",
         "units" : "minutes",
         "step": 10 
+    },
+        "font-size": {
+        "type": "spinbutton",
+        "default": 12,
+        "min": 8,
+        "max": 200,
+    	"units": " ",
+        "description" : "Font size:",
+        "step": 1
+    },
+        "text-color" : {
+	    "type": "colorchooser",
+	    "default" : "rgb(255,255,255)",
+	    "description" : "Text color:",
+	    "tooltip" : "Click to select a new text color"
     }
 }

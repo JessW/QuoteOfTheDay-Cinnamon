@@ -30,6 +30,8 @@ MyDesklet.prototype = {
 
             this.settings.bindProperty(Settings.BindingDirection.IN, "file", "file", this.on_setting_changed, null);
             this.settings.bindProperty(Settings.BindingDirection.IN, "delay", "delay", this.on_setting_changed, null);
+            this.settings.bindProperty(Settings.BindingDirection.IN, "font-size", "fontSize", this.on_font_setting_changed, null);
+            this.settings.bindProperty(Settings.BindingDirection.IN, "text-color", "fontColor", this.on_font_setting_changed, null);
         } 
         catch (e) {
             global.logError(e);
@@ -54,6 +56,10 @@ MyDesklet.prototype = {
         this._update();
         
         this.updateInProgress = false;
+    },
+
+    on_font_setting_changed: function() {
+        this._quote.style="font-size: " + this.fontSize + "pt;\ncolor: " + this.fontColor;
     },
 
     on_desklet_clicked: function(event) {  
