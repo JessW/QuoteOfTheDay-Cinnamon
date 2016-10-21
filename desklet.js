@@ -38,6 +38,7 @@ MyDesklet.prototype = {
         } 
 
         this.on_setting_changed();
+        this.on_font_setting_changed();
     },
 
     on_setting_changed: function() {
