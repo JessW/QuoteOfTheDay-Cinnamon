@@ -15,7 +15,9 @@ MyDesklet.prototype = {
 
     _init: function(metadata, desklet_id) {
         Desklet.Desklet.prototype._init.call(this, metadata, desklet_id);
-        this._quote = new St.Label({style_class: "qotd-desklet-label"});
+         // Would like to change the style class name to qotd-desklet-label,
+         // but leave it as it is for backwards compatibility with user modifications to stylesheet.css
+        this._quote = new St.Label({style_class: "quote-container"});
         this.setContent(this._quote);
         this.setHeader(_("Quote of the day"));
         this.update_id = null;
@@ -32,6 +34,15 @@ MyDesklet.prototype = {
             this.settings.bindProperty(Settings.BindingDirection.IN, "delay", "delay", this.on_setting_changed, null);
             this.settings.bindProperty(Settings.BindingDirection.IN, "font-size", "fontSize", this.on_font_setting_changed, null);
             this.settings.bindProperty(Settings.BindingDirection.IN, "text-color", "fontColor", this.on_font_setting_changed, null);
+            this.settings.bindProperty(Settings.BindingDirection.IN, "horizontal-shadow", "horShadow", this.on_font_setting_changed, null);
+            this.settings.bindProperty(Settings.BindingDirection.IN, "vertical-shadow", "vertShadow", this.on_font_setting_changed, null);
+            this.settings.bindProperty(Settings.BindingDirection.IN, "shadow-blur", "shadowBlur", this.on_font_setting_changed, null);
+            this.settings.bindProperty(Settings.BindingDirection.IN, "shadow-color", "shadowColor", this.on_font_setting_changed, null);
+
+            this._menu.addAction(_("Copy"), Lang.bind(this, function() {
+                cb = St.Clipboard.get_default();
+                cb.set_text(this._quote.get_text());
+            }));
         } 
         catch (e) {
             global.logError(e);
@@ -60,7 +71,10 @@ MyDesklet.prototype = {
     },
 
     on_font_setting_changed: function() {
-        this._quote.style="font-size: " + this.fontSize + "pt;\ncolor: " + this.fontColor;
+        let shadow = this.horShadow + "px " + this.vertShadow + "px " + this.shadowBlur + "px " + this.shadowColor + ";";
+        this._quote.style="font-size: " + this.fontSize + "pt;\n" + 
+                          "color: " + this.fontColor + ";\n" + 
+                          "text-shadow: " + shadow;
     },
 
     on_desklet_clicked: function(event) {  
@@ -87,7 +101,7 @@ MyDesklet.prototype = {
         try {
             // Since we update infrequently, reread the file in case it has changed
             if (!GLib.file_test(this.file, GLib.FileTest.EXISTS)) {
-                return;
+                return "";
             }
             let quoteFileContents = Cinnamon.get_file_contents_utf8_sync(this.file);
             allQuotes = quoteFileContents.toString();
