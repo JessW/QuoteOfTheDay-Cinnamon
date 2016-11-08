@@ -6,8 +6,8 @@ This desklet displays a random quote of the day.  Left click it to display a new
 ** Configuration options **
 The following options are configurable via the Cinnamon Desklet GUI by right clicking "Quote of the Day desklet" and choosing Configure.
 
- 	- Input file - see below for details on file format
-	- How frequently to display a new quote, from once a minute to once a day
+    - Input file - see below for details on file format
+    - How frequently to display a new quote, from once a minute to once a day
     - Font size
     - Font color
     - Font shadow (size, color, and blur)
@@ -22,7 +22,7 @@ The input file format is the same as that for the classic fortune (/usr/games/fo
 
 
 ** TODO **
-Provide a GUI method to change the font.
+- Provide a GUI method to change the font.
 
 ** Known Issues **
 - When the desklet is added in Cinnamon 3.0+, the "Installed Desklets" screen shows a scary red exclaimation mark.  This is because Quote of the Day uses get_file_contents_utf8_sync to read the file of quotes, but this function was deprecated in Cinnamon 3.1  This warning will be fixable with the async version of this function, which should be available in Cinnamon 3.2.
